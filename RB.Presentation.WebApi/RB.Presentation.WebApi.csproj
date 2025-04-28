@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\RB.Application\RB.Application.csproj" />
     <ProjectReference Include="..\RB.Core\RB.Core.csproj" />
-    <ProjectReference Include="..\RB.Infrastructure\RB.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

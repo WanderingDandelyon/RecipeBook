@@ -20,9 +20,9 @@ namespace RB.Presentation.WebApi.Controllers
 
     [HttpGet]
     [Route("/[controller]/[action]/{id}")]
-    public Ingredient? GetIngredient(int id)
+    public async Task<Ingredient?> GetIngredient(int id)
     {
-      return IngredientCatalog.Ingredients.FirstOrDefault(i => i.Id == id);
+      return await IngredientService.GetIngredient(id);
     }
 
     [HttpGet]

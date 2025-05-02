@@ -6,6 +6,41 @@ namespace RB.Application
 {
   public class IngredientService
   {
+    public static async Task<Ingredient?> GetIngredient(int idParam)
+    {
+      return IngredientCatalog.Ingredients.FirstOrDefault(i => i.Id == idParam);
+    }
+
+    public static async Task<Ingredient?> GetIngredient(string searchTokenParam)
+    {
+      var result = IngredientCatalog.Ingredients.FirstOrDefault(i => i.Name.ToLower().Equals(searchTokenParam.ToLower()));
+      if (result != null)
+      {
+        return result;
+      }
+
+      result = IngredientCatalog.Ingredients.FirstOrDefault(i => i.Name.Contains(searchTokenParam.ToLower()));
+      if (result != null)
+      {
+        return result;
+      }
+
+      return IngredientCatalog.Ingredients.FirstOrDefault(i => checkAlternateNames(i, searchTokenParam));
+    }
+
+    private static bool checkAlternateNames(Ingredient ingredientParam, string searchTermParam)
+    {
+      foreach (string altName in ingredientParam.AlternateNames)
+      {
+        if (altName.ToLower().Contains(searchTermParam.ToLower()))
+        {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
     public static async Task<int> CreateIngredient(string nameParam, List<string> altNamesParam, MeasurementUnit measurementUnitParam, 
       List<(int Id, double Amount)> commonSubstitutionsParam, List<int> monthsInSeasonParam, bool isVeganParam, 
       bool isVegetarianParam, bool isDairyParam, bool isFodmapParam, bool isGlutinousParam)

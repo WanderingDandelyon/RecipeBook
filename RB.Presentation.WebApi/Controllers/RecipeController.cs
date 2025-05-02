@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RB.Application;
 using RB.Core.Model;
 using RB.Infrastructure.LocalFileStorage;
 using RB.Presentation.WebApi.Controllers.ParamObjects;
@@ -19,9 +20,9 @@ namespace RB.Presentation.WebApi.Controllers
 
     [HttpGet]
     [Route("/[controller]/[action]/{id}")]
-    public Recipe? GetRecipe(int id)
+    public async Task<Recipe?> GetRecipe(int id)
     {
-      return RecipeBook.Recipes.FirstOrDefault(r => r.Id == id);
+      return await RecipeService.GetRecipe(id);
     }
 
     [HttpGet]

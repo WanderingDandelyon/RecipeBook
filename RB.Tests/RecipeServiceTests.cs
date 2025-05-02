@@ -110,5 +110,26 @@ namespace RB.Tests
       Assert.IsNotNull(friedBanana);
       Assert.That(friedBanana.Name.Equals("Fried Banana"));
     }
+
+    public async Task CreateRecipeTest()
+    {
+      var banapricotSmoothieId = await RecipeService.AddRecipe(
+        "Banapricot Smoothie", 
+        new List<(int, double?)> 
+        { 
+          (bananaId, 1.0D), 
+          (apricotId, 1.0D) 
+        }, 
+        "A banana and apricot smoothie but without the milk and honey?!", 
+        new List<string> 
+        { 
+          "Blend the banana and the apricot in a blender." 
+        }, 
+        1);
+
+      Assert.That(RecipeBook.Recipes.Count() == 3);
+      Assert.That(RecipeBook.Recipes.Any(r => r.Name.Equals("Banapricot Smoothie")));
+      Assert.That(RecipeBook.Recipes.FirstOrDefault(r => r.Id == banapricotSmoothieId).Ingredients.Any(i => i.IngredientId == bananaId && i.MeasurementAmount == 1.0D));
+    }
   }
 }

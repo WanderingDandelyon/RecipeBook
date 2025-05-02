@@ -44,7 +44,7 @@ namespace RB.Presentation.WebApi.Controllers
     // TODO: Add logging
     [HttpPut]
     [Route("/[controller]/[action]")]
-    public int PutRecipe([FromBody] RecipeParam recipeParam)
+    public async Task<int> PutRecipe([FromBody] RecipeParam recipeParam)
     {
       // TODO: Do I want separation from Model objects and the objects passed into and out of API
       // or just keep the same? Kinda doing both right now
@@ -67,36 +67,12 @@ namespace RB.Presentation.WebApi.Controllers
         throw new ArgumentNullException("Cannot add a recipe without any steps."); 
       }
 
-      var recipeIgredients = new List<RecipeIngredient>();
-      foreach (var ingredient in recipeParam.Ingredients) {
-        recipeIgredients.Add(
-          new RecipeIngredient 
-          { 
-            IngredientId = ingredient.IngredientId, 
-            MeasurementAmount = ingredient.Amount ?? throw new ArgumentNullException("Null ingredient amount.") 
-          });
+      if (recipeParam.Ingredients.Any(i => i.Amount == null))
+      {
+        throw new ArgumentNullException("Null ingredient amount.");
       }
 
-      var newRecipe = new Recipe
-      {
-        Name = recipeParam.Name,
-        Description = recipeParam.Description ?? string.Empty,
-        Ingredients = recipeIgredients,
-        Steps = recipeParam.Steps,
-        Yield = recipeParam.Yield
-      };
-
-      if (recipeParam.RecipeId == null) 
-      {
-        RecipeBook.Recipes.Add(newRecipe);
-        JsonFileService.WriteRecipeBook();
-        return RecipeBook.Recipes.Last().Id;
-      }
-
-      var modifiedRecipe = RecipeBook.Recipes.FirstOrDefault(r => r.Id == recipeParam.RecipeId);
-      modifiedRecipe = newRecipe;
-      JsonFileService.WriteRecipeBook();
-      return modifiedRecipe.Id;
+      return await RecipeService.AddRecipe(recipeParam.Name, recipeParam.Ingredients, recipeParam.Description, recipeParam.Steps, recipeParam.Yield);
     }
   }
 }

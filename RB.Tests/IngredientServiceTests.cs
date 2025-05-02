@@ -43,6 +43,14 @@ namespace RB.Tests
     }
 
     [Test]
+    public async Task SearchIngredientsTest()
+    {
+      var ingredients = await IngredientService.SearchIngredients();
+
+      Assert.That(ingredients.Count() == IngredientCatalog.Ingredients.Count());
+    }
+
+    [Test]
     public async Task GetIngredientTest()
     {
       var banana = await IngredientService.GetIngredient(bananaId);

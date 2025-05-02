@@ -15,6 +15,11 @@ namespace RB.Application
       return RecipeBook.Recipes.FirstOrDefault(r => r.Id == idParam);
     }
 
+    public static async Task<List<Recipe>> SearchRecipes()
+    {
+      return RecipeBook.Recipes;
+    }
+
     public static async Task<int> AddRecipe(string nameParam, List<(int IngredientId, double? Amount)> ingredientsParam,
       string descriptionParam, List<string> stepsParam, int? yieldParam)
     {

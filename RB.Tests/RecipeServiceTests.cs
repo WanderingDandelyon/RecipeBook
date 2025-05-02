@@ -103,6 +103,14 @@ namespace RB.Tests
     }
 
     [Test]
+    public async Task SearchRecipesTest()
+    {
+      var recipes = await RecipeService.SearchRecipes();
+
+      Assert.That(recipes.Count() == RecipeBook.Recipes.Count());
+    }
+
+    [Test]
     public async Task GetRecipeTest()
     {
       var friedBanana = await RecipeService.GetRecipe(friedBananaId);

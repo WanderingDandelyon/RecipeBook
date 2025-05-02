@@ -27,7 +27,7 @@ namespace RB.Presentation.WebApi.Controllers
 
     [HttpGet]
     [Route("/[controller]/[action]")]
-    public List<Ingredient>? SearchIngredients()
+    public async Task<List<Ingredient>?> SearchIngredients()
     {
       // TODO: Implement search/filter criteria and params
       /*
@@ -36,8 +36,8 @@ namespace RB.Presentation.WebApi.Controllers
          optional List<Season> Seasons
          optional vegan/vege/lactose/fodmap/gluten/etc. filters
        */
-      // TODO: Move this to Application
-      return IngredientCatalog.Ingredients;
+
+      return await IngredientService.SearchIngredients();
     }
 
     [HttpPut]

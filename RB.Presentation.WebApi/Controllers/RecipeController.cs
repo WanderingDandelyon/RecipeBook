@@ -27,7 +27,7 @@ namespace RB.Presentation.WebApi.Controllers
 
     [HttpGet]
     [Route("/[controller]/[action]")]
-    public List<Recipe>? SearchRecipes()
+    public async Task<List<Recipe>?> SearchRecipes()
     {
       // TODO: Implement search/filter criteria and params
       /*
@@ -37,8 +37,8 @@ namespace RB.Presentation.WebApi.Controllers
          optional List<Season> Seasons
          optional vegan/vege/lactose/fodmap/gluten/etc. filters
        */
-      // TODO: Move this to Application
-      return RecipeBook.Recipes;
+
+      return await RecipeService.SearchRecipes();
     }
 
     // TODO: Add logging

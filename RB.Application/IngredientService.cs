@@ -11,6 +11,11 @@ namespace RB.Application
       return IngredientCatalog.Ingredients.FirstOrDefault(i => i.Id == idParam);
     }
 
+    public static async Task<List<Ingredient>> SearchIngredients()
+    {
+      return IngredientCatalog.Ingredients;
+    }
+
     public static async Task<Ingredient?> GetIngredient(string searchTokenParam)
     {
       var result = IngredientCatalog.Ingredients.FirstOrDefault(i => i.Name.ToLower().Equals(searchTokenParam.ToLower()));

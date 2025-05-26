@@ -19,6 +19,27 @@ namespace RB.Core.Model
     public bool IsGlutinous { get; set; }
     // TODO: Add additional dietary information (asian vegetarianism, pescatarianism, processed, caveman)
     // TODO: Add nutritional information (calories, fat, carb, etc. per count)
+    // Nutrition information (per standard serving)
+    public int Calories { get; set; }
+    public int Fat { get; set; }
+    public int SaturatedFat { get; set; }
+    public int TransFat { get; set; }
+    public int Cholesterol { get; set; }
+    public int Sodium { get; set; }
+    public int TotalCarbohydrate { get; set; }
+    public int DietaryFiber { get; set; }
+    public int TotalSugars { get; set; }
+    public int AddedSugars { get; set; }
+    public int Protein { get; set; }
+    public int VitaminA { get; set; }
+    public int VitaminB { get; set; }
+    public int VitaminC { get; set; }
+    public int VitaminD { get; set; }
+    public int Calcium { get; set; }
+    public int Iron { get; set; }
+    public int Potassium { get; set; }
+    public int Magnesium { get; set; }
+
     public bool IsInSeason()
     {
       if (!MonthsInSeason.Any())

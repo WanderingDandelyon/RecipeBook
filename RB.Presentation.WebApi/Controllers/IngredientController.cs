@@ -27,17 +27,19 @@ namespace RB.Presentation.WebApi.Controllers
 
     [HttpGet]
     [Route("/[controller]/[action]")]
-    public async Task<List<Ingredient>?> SearchIngredients()
+    public async Task<List<Ingredient>?> SearchIngredients(string searchTerm)
     {
-      // TODO: Implement search/filter criteria and params
-      /*
-         optional string Search
-         optional bool InSeason
-         optional List<Season> Seasons
-         optional vegan/vege/lactose/fodmap/gluten/etc. filters
-       */
-
-      return await IngredientService.SearchIngredients();
+      // If no search term is provided, return all ingredients
+      if (string.IsNullOrWhiteSpace(searchTerm))
+      {
+        return await IngredientService.SearchIngredients();
+      }
+      var ingredient = await IngredientService.SearchIngredient(searchTerm);
+      if (ingredient != null)
+      {
+        return new List<Ingredient> { ingredient };
+      }
+      return new List<Ingredient>();
     }
 
     [HttpPut]

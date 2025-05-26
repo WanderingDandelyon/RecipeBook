@@ -26,18 +26,18 @@ namespace RB.Presentation.WebApi.Controllers
     }
 
     [HttpGet]
-    [Route("/[controller]/[action]")]
-    public async Task<List<Ingredient>?> SearchIngredients(string searchTerm)
+    [Route("/[controller]/[action]/{searchTermParam}")]
+    public async Task<List<Ingredient>?> SearchIngredients(string searchTermParam)
     {
       // If no search term is provided, return all ingredients
-      if (string.IsNullOrWhiteSpace(searchTerm))
+      if (string.IsNullOrWhiteSpace(searchTermParam))
       {
         return await IngredientService.SearchIngredients();
       }
-      var ingredient = await IngredientService.SearchIngredient(searchTerm);
-      if (ingredient != null)
+      var ingredients = await IngredientService.SearchIngredients(searchTermParam);
+      if (ingredients != null)
       {
-        return new List<Ingredient> { ingredient };
+        return ingredients;
       }
       return new List<Ingredient>();
     }

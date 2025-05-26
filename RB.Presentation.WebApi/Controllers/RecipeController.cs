@@ -20,7 +20,7 @@ namespace RB.Presentation.WebApi.Controllers
 
     [HttpGet]
     [Route("/[controller]/[action]/{id}")]
-    public async Task<Recipe?> GetRecipe(int id)
+    public async Task<Recipe?> GetRecipe(string id)
     {
       return await RecipeService.GetRecipe(id);
     }
@@ -44,7 +44,7 @@ namespace RB.Presentation.WebApi.Controllers
     // TODO: Add logging
     [HttpPut]
     [Route("/[controller]/[action]")]
-    public async Task<int> PutRecipe([FromBody] RecipeParam recipeParam)
+    public async Task<string> PutRecipe([FromBody] RecipeParam recipeParam)
     {
       // TODO: Do I want separation from Model objects and the objects passed into and out of API
       // or just keep the same? Kinda doing both right now

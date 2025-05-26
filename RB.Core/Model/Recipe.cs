@@ -8,8 +8,8 @@ namespace RB.Core.Model
 {
   public class Recipe
   {
-    private readonly int id;
-    public int Id { get => id; }
+    private readonly string id;
+    public string Id { get => id; }
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public List<RecipeIngredient> Ingredients { get; set; } = new List<RecipeIngredient>();
@@ -18,7 +18,7 @@ namespace RB.Core.Model
 
     public Recipe()
     {
-      id = RecipeBook.Recipes.Count;
+      id = Guid.NewGuid().ToString();
     }
   }
 }

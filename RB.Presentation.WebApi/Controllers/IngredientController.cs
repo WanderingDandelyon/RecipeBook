@@ -20,7 +20,7 @@ namespace RB.Presentation.WebApi.Controllers
 
     [HttpGet]
     [Route("/[controller]/[action]/{id}")]
-    public async Task<Ingredient?> GetIngredient(int id)
+    public async Task<Ingredient?> GetIngredient(string id)
     {
       return await IngredientService.GetIngredient(id);
     }
@@ -42,7 +42,7 @@ namespace RB.Presentation.WebApi.Controllers
 
     [HttpPut]
     [Route("/[controller]/[action]")]
-    public async Task<int> PutIngredient([FromBody] IngredientParam ingredientParam)
+    public async Task<string> PutIngredient([FromBody] IngredientParam ingredientParam)
     {
       // TODO: Make this accessible only to admins
       if (ingredientParam == null)

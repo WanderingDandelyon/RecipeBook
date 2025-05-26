@@ -6,9 +6,9 @@ namespace RB.Application
 {
   public class IngredientService
   {
-    public static async Task<Ingredient?> GetIngredient(int idParam)
+    public static async Task<Ingredient?> GetIngredient(string idParam)
     {
-      return IngredientCatalog.Ingredients.FirstOrDefault(i => i.Id == idParam);
+      return IngredientCatalog.Ingredients.FirstOrDefault(i => i.Id.Equals(idParam));
     }
 
     public static async Task<List<Ingredient>> SearchIngredients()
@@ -16,7 +16,7 @@ namespace RB.Application
       return IngredientCatalog.Ingredients;
     }
 
-    public static async Task<Ingredient?> GetIngredient(string searchTokenParam)
+    public static async Task<Ingredient?> SearchIngredient(string searchTokenParam)
     {
       var result = IngredientCatalog.Ingredients.FirstOrDefault(i => i.Name.ToLower().Equals(searchTokenParam.ToLower()));
       if (result != null)
@@ -46,8 +46,8 @@ namespace RB.Application
       return false;
     }
 
-    public static async Task<int> CreateIngredient(string nameParam, List<string> altNamesParam, MeasurementUnit measurementUnitParam, 
-      List<(int Id, double Amount)> commonSubstitutionsParam, List<int> monthsInSeasonParam, bool isVeganParam, 
+    public static async Task<string> CreateIngredient(string nameParam, List<string> altNamesParam, MeasurementUnit measurementUnitParam, 
+      List<(string Id, double Amount)> commonSubstitutionsParam, List<int> monthsInSeasonParam, bool isVeganParam, 
       bool isVegetarianParam, bool isDairyParam, bool isFodmapParam, bool isGlutinousParam)
     {
       var commonSubstitutions = new List<RecipeIngredient>();
@@ -82,7 +82,7 @@ namespace RB.Application
 
       IngredientCatalog.Ingredients.Add(newIngredient);
       JsonFileService.WriteIngredientCatalog();
-      return IngredientCatalog.Ingredients.Last().Id;
+      return newIngredient.Id;
 
       /*
       var modifiedIngredient = IngredientCatalog.Ingredients.FirstOrDefault(i => i.Id == ingredientIdParam);

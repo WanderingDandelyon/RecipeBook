@@ -9,7 +9,7 @@ namespace RB.Presentation.WebApi.Controllers.ParamObjects
     public string? Name { get; set; }
     public List<string>? AlternateNames { get; set; } = new List<string>();
     public int? MeasurementUnit { get; set; }
-    public List<(int Id, double Amount)>? CommonSubstitutions { get; set; } = new List<(int Id, double Amount)>();
+    public List<(string Id, double Amount)>? CommonSubstitutions { get; set; } = new List<(string Id, double Amount)>();
     // TODO: Make this more dynamic relative to region
     public List<int>? MonthsInSeason { get; set; } = new List<int>();
     public int? Season { get; set; }

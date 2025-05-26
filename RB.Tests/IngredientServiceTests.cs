@@ -6,7 +6,7 @@ namespace RB.Tests
 {
   public class IngredientServiceTests
   {
-    int bananaId;
+    string bananaId;
 
     [SetUp]
     public void SetUp()
@@ -32,43 +32,42 @@ namespace RB.Tests
         }
       };
 
-      bananaId = IngredientCatalog.Ingredients.FirstOrDefault(i => i.Name.Equals("Banana"))?.Id ?? -1;
+      bananaId = IngredientCatalog.Ingredients.FirstOrDefault(i => i.Name.Equals("Banana"))?.Id;
     }
 
     [Test]
     public async Task SetUpTest()
     {
       Assert.That(IngredientCatalog.Ingredients.Count, Is.EqualTo(3));
-      Assert.That(bananaId >= 0);
+      Assert.That(!string.IsNullOrWhiteSpace(bananaId));
     }
 
     [Test]
     public async Task SearchIngredientsTest()
     {
       var ingredients = await IngredientService.SearchIngredients();
+      var apricot = await IngredientService.SearchIngredient("Apricot");
+      var pawpaw = await IngredientService.SearchIngredient("Indiana Banana");
 
       Assert.That(ingredients.Count() == IngredientCatalog.Ingredients.Count());
-    }
-
-    [Test]
-    public async Task GetIngredientTest()
-    {
-      var banana = await IngredientService.GetIngredient(bananaId);
-      var apricot = await IngredientService.GetIngredient("Apricot");
-      var pawpaw = await IngredientService.GetIngredient("Indiana Banana");
-
-      Assert.IsNotNull(banana);
-      Assert.That(banana.Name.Equals("Banana"));
       Assert.IsNotNull(apricot);
       Assert.IsNotNull(pawpaw);
       Assert.That(pawpaw.Name.Equals("Pawpaw"));
     }
 
     [Test]
+    public async Task GetIngredientTest()
+    {
+      var banana = await IngredientService.GetIngredient(bananaId);
+      Assert.IsNotNull(banana);
+      Assert.That(banana.Name.Equals("Banana"));
+    }
+
+    [Test]
     public async Task CreateNewIngredientTest()
     {
-      var bolognaId = await IngredientService.CreateIngredient("Bologna", new List<string>(), MeasurementUnit.Gram, new List<(int Id, double Amount)>(), new List<int>(), false, false, false, false, false);
-      var magicBeanId = await IngredientService.CreateIngredient("Magic Bean", new List<string> { "WonderBean" }, MeasurementUnit.Gram, new List<(int Id, double Amount)> { (bolognaId, 1.0D) }, new List<int> { 2, 3, 4 }, true, true, true, true, true);
+      var bolognaId = await IngredientService.CreateIngredient("Bologna", new List<string>(), MeasurementUnit.Gram, new List<(string Id, double Amount)>(), new List<int>(), false, false, false, false, false);
+      var magicBeanId = await IngredientService.CreateIngredient("Magic Bean", new List<string> { "WonderBean" }, MeasurementUnit.Gram, new List<(string Id, double Amount)> { (bolognaId, 1.0D) }, new List<int> { 2, 3, 4 }, true, true, true, true, true);
       
       Assert.That(IngredientCatalog.Ingredients.Any(i => i.Name.Equals("Bologna")));
       var bologna = IngredientCatalog.Ingredients.FirstOrDefault(i => i.Name.Equals("Bologna"));

@@ -4,8 +4,8 @@ namespace RB.Core.Model
 {
   public class Ingredient
   {
-    private readonly int id;
-    public int Id { get => id; }
+    private readonly string id;
+    public string Id { get => id; }
     public string Name { get; set; } = string.Empty;
     public List<string> AlternateNames { get; set; } = new List<string>();
     public MeasurementUnit MeasurementUnit { get; set; }
@@ -53,7 +53,7 @@ namespace RB.Core.Model
 
     public Ingredient()
     {
-      id = IngredientCatalog.Ingredients.Count;
+      id = Guid.NewGuid().ToString();
     }
   }
 }

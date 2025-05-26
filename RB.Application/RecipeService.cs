@@ -10,7 +10,7 @@ namespace RB.Application
 {
   public class RecipeService
   {
-    public static async Task<Recipe?> GetRecipe(int idParam)
+    public static async Task<Recipe?> GetRecipe(string idParam)
     {
       return RecipeBook.Recipes.FirstOrDefault(r => r.Id == idParam);
     }
@@ -20,7 +20,7 @@ namespace RB.Application
       return RecipeBook.Recipes;
     }
 
-    public static async Task<int> AddRecipe(string nameParam, List<(int IngredientId, double? Amount)> ingredientsParam,
+    public static async Task<string> AddRecipe(string nameParam, List<(string IngredientId, double? Amount)> ingredientsParam,
       string descriptionParam, List<string> stepsParam, int? yieldParam)
     {
       var recipeIgredients = new List<RecipeIngredient>();
@@ -45,7 +45,7 @@ namespace RB.Application
 
       RecipeBook.Recipes.Add(newRecipe);
       JsonFileService.WriteRecipeBook();
-      return RecipeBook.Recipes.Last().Id; // TODO: This is not threadsafe. See ingredient creation, also. Ticket 24
+      return newRecipe.Id;
 
       /*
       var modifiedRecipe = RecipeBook.Recipes.FirstOrDefault(r => r.Id == recipeParam.RecipeId);

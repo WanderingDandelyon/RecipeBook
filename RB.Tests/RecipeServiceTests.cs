@@ -10,11 +10,11 @@ namespace RB.Tests
 {
   public class RecipeServiceTests
   {
-    private int bananaId;
-    private int apricotId;
-    private int evooId;
-    private int friedBananaId;
-    private int friedApricotId;
+    private string bananaId;
+    private string apricotId;
+    private string evooId;
+    private string friedBananaId;
+    private string friedApricotId;
 
     [SetUp]
     public void SetUp()
@@ -35,9 +35,9 @@ namespace RB.Tests
         }
       };
 
-      bananaId = IngredientCatalog.Ingredients.FirstOrDefault(i => i.Name.Equals("Banana"))?.Id ?? -1;
-      apricotId = IngredientCatalog.Ingredients.FirstOrDefault(i => i.Name.Equals("Apricot"))?.Id ?? -1;
-      evooId = IngredientCatalog.Ingredients.FirstOrDefault(i => i.Name.Equals("Extra Virgin Olive Oil"))?.Id ?? -1;
+      bananaId = IngredientCatalog.Ingredients.FirstOrDefault(i => i.Name.Equals("Banana"))?.Id;
+      apricotId = IngredientCatalog.Ingredients.FirstOrDefault(i => i.Name.Equals("Apricot"))?.Id;
+      evooId = IngredientCatalog.Ingredients.FirstOrDefault(i => i.Name.Equals("Extra Virgin Olive Oil"))?.Id;
 
       RecipeBook.Recipes = new List<Recipe>
       {
@@ -85,21 +85,21 @@ namespace RB.Tests
         }
       };
 
-      friedBananaId = RecipeBook.Recipes.FirstOrDefault(r => r.Name.Equals("Fried Banana"))?.Id ?? -1;
-      friedApricotId = RecipeBook.Recipes.FirstOrDefault(r => r.Name.Equals("Fried Apricot"))?.Id ?? -1;
+      friedBananaId = RecipeBook.Recipes.FirstOrDefault(r => r.Name.Equals("Fried Banana"))?.Id;
+      friedApricotId = RecipeBook.Recipes.FirstOrDefault(r => r.Name.Equals("Fried Apricot"))?.Id;
     }
 
     [Test]
     public async Task SetUpTest()
     {
       Assert.That(IngredientCatalog.Ingredients.Count, Is.EqualTo(3));
-      Assert.That(bananaId >= 0);
-      Assert.That(apricotId >= 0);
-      Assert.That(evooId >= 0);
+      Assert.That(!string.IsNullOrWhiteSpace(bananaId));
+      Assert.That(!string.IsNullOrWhiteSpace(apricotId));
+      Assert.That(!string.IsNullOrWhiteSpace(evooId));
 
       Assert.That(RecipeBook.Recipes.Count, Is.EqualTo(2));
-      Assert.That(friedBananaId >= 0);
-      Assert.That(friedApricotId >= 0);
+      Assert.That(!string.IsNullOrWhiteSpace(friedBananaId));
+      Assert.That(!string.IsNullOrWhiteSpace(friedApricotId));
     }
 
     [Test]
@@ -123,7 +123,7 @@ namespace RB.Tests
     {
       var banapricotSmoothieId = await RecipeService.AddRecipe(
         "Banapricot Smoothie", 
-        new List<(int, double?)> 
+        new List<(string, double?)> 
         { 
           (bananaId, 1.0D), 
           (apricotId, 1.0D) 

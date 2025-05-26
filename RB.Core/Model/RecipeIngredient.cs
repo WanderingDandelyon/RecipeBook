@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using RB.Core.Enums;
+using RB.Core.Model.Enums;
 
 namespace RB.Core.Model
 {

@@ -1,6 +1,7 @@
 ﻿using RB.Core.Model.Enums;
 using RB.Core.Model;
 using RB.Infrastructure.LocalFileStorage;
+using System.Collections.Generic;
 
 namespace RB.Application
 {
@@ -16,21 +17,15 @@ namespace RB.Application
       return IngredientCatalog.Ingredients;
     }
 
-    public static async Task<Ingredient?> SearchIngredient(string searchTokenParam)
+    public static async Task<List<Ingredient?>> SearchIngredients(string searchTokenParam)
     {
-      var result = IngredientCatalog.Ingredients.FirstOrDefault(i => i.Name.ToLower().Equals(searchTokenParam.ToLower()));
-      if (result != null)
-      {
-        return result;
-      }
+      var foundIngredients = new List<Ingredient>();
 
-      result = IngredientCatalog.Ingredients.FirstOrDefault(i => i.Name.Contains(searchTokenParam.ToLower()));
-      if (result != null)
-      {
-        return result;
-      }
+      foundIngredients.AddRange(IngredientCatalog.Ingredients.Where(i => i.Name.ToLower().Equals(searchTokenParam.ToLower())));
+      foundIngredients.AddRange(IngredientCatalog.Ingredients.Where(i => i.Name.Contains(searchTokenParam.ToLower())));
+      foundIngredients.AddRange(IngredientCatalog.Ingredients.Where(i => checkAlternateNames(i, searchTokenParam)));
 
-      return IngredientCatalog.Ingredients.FirstOrDefault(i => checkAlternateNames(i, searchTokenParam));
+      return foundIngredients;
     }
 
     private static bool checkAlternateNames(Ingredient ingredientParam, string searchTermParam)

@@ -46,13 +46,15 @@ namespace RB.Tests
     public async Task SearchIngredientsTest()
     {
       var ingredients = await IngredientService.SearchIngredients();
-      var apricot = await IngredientService.SearchIngredient("Apricot");
-      var pawpaw = await IngredientService.SearchIngredient("Indiana Banana");
+      var apricot = await IngredientService.SearchIngredients("Apricot");
+      var pawpaw = await IngredientService.SearchIngredients("Indiana Banana");
 
       Assert.That(ingredients.Count() == IngredientCatalog.Ingredients.Count());
       Assert.IsNotNull(apricot);
+      Assert.That(apricot.Count > 0);
       Assert.IsNotNull(pawpaw);
-      Assert.That(pawpaw.Name.Equals("Pawpaw"));
+      Assert.That(pawpaw.Count > 0);
+      Assert.That(pawpaw.Any(p => p.Name.Equals("Pawpaw")));
     }
 
     [Test]

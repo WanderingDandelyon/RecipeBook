@@ -106,7 +106,7 @@ namespace RB.Application
 
         // Calculate final score
         double finalScore = criteria > 0 ? matches / criteria : 0;
-        if (matchesDietary)
+        if (matchesDietary && matches > 0)
           results.Add(new RecipeSearchResult(recipe, finalScore));
       }
 

@@ -32,7 +32,6 @@ namespace RB.Presentation.WebApi.Controllers
             searchParam.SearchText,
             searchParam.IngredientNames,
             searchParam.InSeason,
-            searchParam.Seasons,
             searchParam.IsVegan,
             searchParam.IsVegetarian,
             searchParam.IsLactoseFree,

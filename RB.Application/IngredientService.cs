@@ -19,6 +19,7 @@ namespace RB.Application
 
     public static async Task<List<Ingredient?>> SearchIngredients(string searchTokenParam)
     {
+      // TODO: Sort and rank by best match
       var foundIngredients = new List<Ingredient>();
 
       foundIngredients.AddRange(IngredientCatalog.Ingredients.Where(i => i.Name.ToLower().Equals(searchTokenParam.ToLower())));
@@ -43,7 +44,7 @@ namespace RB.Application
 
     public static async Task<string> CreateIngredient(string nameParam, List<string> altNamesParam, MeasurementUnit measurementUnitParam, 
       List<(string Id, double Amount)> commonSubstitutionsParam, List<int> monthsInSeasonParam, bool isVeganParam, 
-      bool isVegetarianParam, bool isDairyParam, bool isFodmapParam, bool isGlutinousParam)
+      bool isVegetarianParam, bool isLactoseFreeParam, bool isFodmapParam, bool isGlutinousParam)
     {
       var commonSubstitutions = new List<RecipeIngredient>();
       foreach (var sub in commonSubstitutionsParam)
@@ -70,7 +71,7 @@ namespace RB.Application
         MonthsInSeason = monthsInSeason,
         IsVegan = isVeganParam,// ?? throw new ArgumentNullException("Must specify whether or not ingredient is vegan"),
         IsVegetarian = isVegetarianParam,// ?? throw new ArgumentNullException("Must specify whether or not ingredient is vegetarian"),
-        IsDairy = isDairyParam,// ?? throw new ArgumentNullException("Must specify whether or not ingredient contains lactose"),
+        IsLactoseFree = isLactoseFreeParam,// ?? throw new ArgumentNullException("Must specify whether or not ingredient contains lactose"),
         IsFodmap = isFodmapParam,// ?? throw new ArgumentNullException("Must specify whether or not ingredient is a fodmap irritant"),
         IsGlutinous = isGlutinousParam,// ?? throw new ArgumentNullException("Must specify whether or not ingredient contains gluten")
       };

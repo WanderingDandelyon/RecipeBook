@@ -68,14 +68,14 @@ namespace RB.Tests
     [Test]
     public async Task CreateNewIngredientTest()
     {
-      var bolognaId = await IngredientService.CreateIngredient("Bologna", new List<string>(), MeasurementUnit.Gram, new List<(string Id, double Amount)>(), new List<int>(), false, false, false, false, false);
+      var bolognaId = await IngredientService.CreateIngredient("Bologna", new List<string>(), MeasurementUnit.Gram, new List<(string Id, double Amount)>(), new List<int>(), false, false, true, false, false);
       var magicBeanId = await IngredientService.CreateIngredient("Magic Bean", new List<string> { "WonderBean" }, MeasurementUnit.Gram, new List<(string Id, double Amount)> { (bolognaId, 1.0D) }, new List<int> { 2, 3, 4 }, true, true, true, true, true);
       
       Assert.That(IngredientCatalog.Ingredients.Any(i => i.Name.Equals("Bologna")));
       var bologna = IngredientCatalog.Ingredients.FirstOrDefault(i => i.Name.Equals("Bologna"));
       Assert.IsFalse(bologna?.IsVegan);
       Assert.IsFalse(bologna?.IsVegetarian);
-      Assert.IsFalse(bologna?.IsDairy);
+      Assert.IsTrue(bologna?.IsLactoseFree);
       Assert.IsFalse(bologna?.IsFodmap);
       Assert.IsFalse(bologna?.IsGlutinous);
 
@@ -83,7 +83,7 @@ namespace RB.Tests
       var magicBean = IngredientCatalog.Ingredients.FirstOrDefault(i => i.Name.Equals("Magic Bean"));
       Assert.IsTrue(magicBean?.IsVegan);
       Assert.IsTrue(magicBean?.IsVegetarian);
-      Assert.IsTrue(magicBean?.IsDairy);
+      Assert.IsTrue(magicBean?.IsLactoseFree);
       Assert.IsTrue(magicBean?.IsFodmap);
       Assert.IsTrue(magicBean?.IsGlutinous);
       Assert.That(magicBean.AlternateNames.Any(n => n.Equals("WonderBean")));

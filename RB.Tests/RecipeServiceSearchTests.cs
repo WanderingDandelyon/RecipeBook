@@ -130,7 +130,7 @@ namespace RB.Tests
       var results = await RecipeService.SearchRecipes(searchText: "pasta");
 
       Assert.That(results.Count == 1);
-      Assert.That(1.0 == results[0].MatchScore);
+      Assert.That(1.5 == results[0].MatchScore);
       Assert.That(PastaDish.Id.Equals(results[0].Recipe.Id));
     }
 

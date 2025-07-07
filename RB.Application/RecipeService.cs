@@ -83,15 +83,14 @@ namespace RB.Application
         }
 
         // Dietary restrictions
+        bool matchesDietary = true;
         if (isVegan == true || isVegetarian == true || isLactoseFree == true || isGlutenFree == true)
         {
           criteria++;
           var recipeIngredients = recipe.Ingredients
             .Select(ri => IngredientCatalog.Ingredients.FirstOrDefault(i => i.Id == ri.IngredientId))
-            .Where(i => i != null)
             .ToList();
 
-          bool matchesDietary = true;
           if (isVegan == true && recipeIngredients.Any(i => !i.IsVegan))
             matchesDietary = false;
           else if (isVegetarian == true && recipeIngredients.Any(i => !i.IsVegetarian))
@@ -107,7 +106,8 @@ namespace RB.Application
 
         // Calculate final score
         double finalScore = criteria > 0 ? matches / criteria : 0;
-        results.Add(new RecipeSearchResult(recipe, finalScore));
+        if (matchesDietary)
+          results.Add(new RecipeSearchResult(recipe, finalScore));
       }
 
       return results.OrderByDescending(r => r.MatchScore).ToList();

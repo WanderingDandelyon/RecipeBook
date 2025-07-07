@@ -25,20 +25,19 @@ namespace RB.Presentation.WebApi.Controllers
       return await RecipeService.GetRecipe(id);
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route("/[controller]/[action]")]
-    public async Task<List<Recipe>?> SearchRecipes()
+    public async Task<List<RecipeSearchResult>> SearchRecipes([FromBody] RecipeSearchParam searchParam)
     {
-      // TODO: Implement search/filter criteria and params
-      /*
-         optional string Search
-         optional List<string> IngredientNames
-         optional bool InSeason
-         optional List<Season> Seasons
-         optional vegan/vege/lactose/fodmap/gluten/etc. filters
-       */
-
-      return await RecipeService.SearchRecipes();
+        return await RecipeService.SearchRecipes(
+            searchParam.SearchText,
+            searchParam.IngredientNames,
+            searchParam.InSeason,
+            searchParam.Seasons,
+            searchParam.IsVegan,
+            searchParam.IsVegetarian,
+            searchParam.IsLactoseFree,
+            searchParam.IsGlutenFree);
     }
 
     // TODO: Add logging

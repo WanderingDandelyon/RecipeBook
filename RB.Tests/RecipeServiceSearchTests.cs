@@ -174,9 +174,13 @@ namespace RB.Tests
           isVegan: true
       );
 
-      Assert.That(results.Count == 1);
+      // TODO: Make dietary more into a filter after getting results that can be applied to either
+      // a search or getting a full list
+      Assert.That(results.Count == 2);
       Assert.That(1.0 == results[0].MatchScore);
+      Assert.That(0.5 == results[1].MatchScore);
       Assert.That(TofuStirFry.Id.Equals(results[0].Recipe.Id));
+      Assert.That(PastaDish.Id.Equals(results[1].Recipe.Id));
     }
   }
 }

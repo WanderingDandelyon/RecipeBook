@@ -15,9 +15,97 @@ namespace RB.Application
       return RecipeBook.Recipes.FirstOrDefault(r => r.Id == idParam);
     }
 
-    public static async Task<List<Recipe>> SearchRecipes()
+    public static async Task<List<RecipeSearchResult>> SearchRecipes(string? searchText = null, 
+        List<string>? ingredientNames = null, bool? inSeason = null, List<Month>? seasons = null,
+        bool? isVegan = null, bool? isVegetarian = null, bool? isLactoseFree = null, bool? isGlutenFree = null)
     {
-      return RecipeBook.Recipes;
+        var results = new List<RecipeSearchResult>();
+        
+        foreach (var recipe in RecipeBook.Recipes)
+        {
+            double score = 0;
+            double matches = 0;
+            double criteria = 0;
+
+            // Text search in name and description
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                criteria++;
+                if (recipe.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                    matches += 1;
+                if (recipe.Description.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                    matches += 0.5;
+            }
+
+            // Ingredient search
+            if (ingredientNames != null && ingredientNames.Any())
+            {
+                criteria++;
+                var recipeIngredients = recipe.Ingredients
+                    .Select(ri => IngredientCatalog.Ingredients.FirstOrDefault(i => i.Id == ri.IngredientId)?.Name ?? "")
+                    .ToList();
+                
+                double ingredientMatches = ingredientNames
+                    .Count(searchIngredient => recipeIngredients
+                        .Any(ri => ri.Contains(searchIngredient, StringComparison.OrdinalIgnoreCase)));
+                
+                matches += ingredientMatches / ingredientNames.Count;
+            }
+
+            // Season check
+            if (inSeason == true || (seasons != null && seasons.Any()))
+            {
+                criteria++;
+                var recipeIngredients = recipe.Ingredients
+                    .Select(ri => IngredientCatalog.Ingredients.FirstOrDefault(i => i.Id == ri.IngredientId))
+                    .Where(i => i != null)
+                    .ToList();
+
+                if (inSeason == true)
+                {
+                    var currentMonth = (Month)DateTime.Now.Month;
+                    var inSeasonIngredients = recipeIngredients
+                        .Count(i => i.InSeason(currentMonth));
+                    matches += (double)inSeasonIngredients / recipeIngredients.Count;
+                }
+                else if (seasons != null && seasons.Any())
+                {
+                    var inSeasonIngredients = recipeIngredients
+                        .Count(i => seasons.Any(s => i.InSeason(s)));
+                    matches += (double)inSeasonIngredients / recipeIngredients.Count;
+                }
+            }
+
+            // Dietary restrictions
+            if (isVegan == true || isVegetarian == true || isLactoseFree == true || isGlutenFree == true)
+            {
+                criteria++;
+                var recipeIngredients = recipe.Ingredients
+                    .Select(ri => IngredientCatalog.Ingredients.FirstOrDefault(i => i.Id == ri.IngredientId))
+                    .Where(i => i != null)
+                    .ToList();
+
+                bool matchesDietary = true;
+                if (isVegan == true && recipeIngredients.Any(i => !i.IsVegan))
+                    matchesDietary = false;
+                else if (isVegetarian == true && recipeIngredients.Any(i => !i.IsVegetarian))
+                    matchesDietary = false;
+                else if (isLactoseFree == true && recipeIngredients.Any(i => !i.IsLactoseFree))
+                    matchesDietary = false;
+                else if (isGlutenFree == true && recipeIngredients.Any(i => !i.IsGlutenFree))
+                    matchesDietary = false;
+
+                if (matchesDietary)
+                    matches += 1;
+            }
+
+            // Calculate final score
+            double finalScore = criteria > 0 ? matches / criteria : 0;
+            results.Add(new RecipeSearchResult(recipe, finalScore));
+        }
+
+        // Sort by score descending
+        return results.OrderByDescending(r => r.MatchScore).ToList();
     }
 
     public static async Task<string> AddRecipe(string nameParam, List<(string IngredientId, double? Amount)> ingredientsParam,

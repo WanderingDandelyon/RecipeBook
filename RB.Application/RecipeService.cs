@@ -17,16 +17,24 @@ namespace RB.Application
     }
 
     public static async Task<List<RecipeSearchResult>> SearchRecipes(string? searchText = null, 
-        List<string>? ingredientNames = null, bool? inSeason = null, List<Month>? seasons = null,
-        bool? isVegan = null, bool? isVegetarian = null, bool? isLactoseFree = null, bool? isGlutenFree = null)
+        List<string>? ingredientNames = null, bool? inSeason = null, bool? isVegan = null, 
+        bool? isVegetarian = null, bool? isLactoseFree = null, bool? isGlutenFree = null)
     {
       var results = new List<RecipeSearchResult>();
         
       foreach (var recipe in RecipeBook.Recipes)
       {
+        // TODO: Split this into a separate Recipe Search Service, and make each criteria separate async functions
+        // to be run altogether asynchronously
         double score = 0;
         double matches = 0;
         double criteria = 0;
+
+        var searchIngredientTasks = new List<Task<List<Ingredient?>>>();
+        foreach (var ingredientName in ingredientNames)
+        {
+          searchIngredientTasks.Add(IngredientService.SearchIngredients(ingredientName));
+        }
 
         // Text search in name and description
         if (!string.IsNullOrEmpty(searchText))
@@ -38,40 +46,37 @@ namespace RB.Application
             matches += 0.5;
         }
 
+        await Task.WhenAll(searchIngredientTasks);
+
+        var searchIngredients = new List<Ingredient?>();
+        foreach (var task in searchIngredientTasks)
+        {
+          searchIngredients.Add(task.Result.FirstOrDefault());
+        }
+
         // Ingredient search
         if (ingredientNames != null && ingredientNames.Any())
         {
           criteria++;
-          var recipeIngredients = recipe.Ingredients
-            .Select(ri => IngredientCatalog.Ingredients.FirstOrDefault(i => i.Id == ri.IngredientId)?.Name ?? "")
-            .ToList();
-                
-          double ingredientMatches = ingredientNames
-            .Count(searchIngredient => recipeIngredients
-              .Any(ri => ri.Contains(searchIngredient, StringComparison.OrdinalIgnoreCase)));
+
+          double ingredientMatches = searchIngredients.Count(si => recipe.Ingredients.Any(ri => 
+            string.Equals(ri.IngredientId, si.Id)));
                 
           matches += ingredientMatches / ingredientNames.Count;
         }
 
         // Season check
-        if (inSeason == true || (seasons != null && seasons.Any()))
+        if (inSeason == true)
         {
           criteria++;
           var recipeIngredients = recipe.Ingredients
-            .Select(ri => IngredientCatalog.Ingredients.FirstOrDefault(i => i.Id == ri.IngredientId))
-            .Where(i => i != null)
+            .Select(ri => IngredientCatalog.Ingredients.FirstOrDefault(i => i.Id.Equals(ri.IngredientId)))
             .ToList();
 
           if (inSeason == true)
           {
             var inSeasonIngredients = recipeIngredients
               .Count(i => i.IsInSeason());
-            matches += (double)inSeasonIngredients / recipeIngredients.Count;
-          }
-          else if (seasons != null && seasons.Any())
-          {
-            var inSeasonIngredients = recipeIngredients
-              .Count(i => seasons.Any(s => i.IsInSeason()));
             matches += (double)inSeasonIngredients / recipeIngredients.Count;
           }
         }
@@ -92,7 +97,7 @@ namespace RB.Application
             matchesDietary = false;
           else if (isLactoseFree == true && recipeIngredients.Any(i => !i.IsLactoseFree))
             matchesDietary = false;
-          else if (isGlutenFree == true && recipeIngredients.Any(i => !i.IsGlutenFree))
+          else if (isGlutenFree == true && recipeIngredients.Any(i => i.IsGlutinous))
             matchesDietary = false;
 
           if (matchesDietary)
@@ -104,7 +109,6 @@ namespace RB.Application
         results.Add(new RecipeSearchResult(recipe, finalScore));
       }
 
-      // Sort by score descending
       return results.OrderByDescending(r => r.MatchScore).ToList();
     }
 

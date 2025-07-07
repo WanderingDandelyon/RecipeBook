@@ -19,6 +19,7 @@ namespace RB.Application
 
     public static async Task<List<Ingredient?>> SearchIngredients(string searchTokenParam)
     {
+      // TODO: Sort and rank by best match
       var foundIngredients = new List<Ingredient>();
 
       foundIngredients.AddRange(IngredientCatalog.Ingredients.Where(i => i.Name.ToLower().Equals(searchTokenParam.ToLower())));

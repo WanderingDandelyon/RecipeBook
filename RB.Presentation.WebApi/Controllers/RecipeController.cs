@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RB.Application;
 using RB.Core.Model;
-using RB.Infrastructure.LocalFileStorage;
 using RB.Presentation.WebApi.Controllers.ParamObjects;
 
 namespace RB.Presentation.WebApi.Controllers
@@ -56,13 +55,11 @@ namespace RB.Presentation.WebApi.Controllers
       {
         throw new ArgumentNullException("Recipe needs a name");
       }
-      // TODO: Account for a List of Empty values
-      if (recipeParam.Ingredients == null || !recipeParam.Ingredients.Any())
+      if (recipeParam.Ingredients == null || !recipeParam.Ingredients.Any() || recipeParam.Ingredients.All(i => string.IsNullOrWhiteSpace(i.IngredientId)))
       {
         throw new ArgumentNullException("Cannot add a recipe without ingredients");
       }
-      // TODO: Account for a List of Empty values
-      if (recipeParam.Steps == null || !recipeParam.Steps.Any()) 
+      if (recipeParam.Steps == null || !recipeParam.Steps.Any() || recipeParam.Steps.All(s => string.IsNullOrWhiteSpace(s))) 
       { 
         throw new ArgumentNullException("Cannot add a recipe without any steps."); 
       }

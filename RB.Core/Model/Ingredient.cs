@@ -42,10 +42,10 @@ namespace RB.Core.Model
 
     public bool IsInSeason()
     {
-      if (!MonthsInSeason.Any())
+      /*if (!MonthsInSeason.Any())
       {
         return true;
-      }
+      }*/
 
       var currentMonth = DateTime.Now.Month;
       return MonthsInSeason.Contains((Month)currentMonth) || MonthsInSeason.Contains(Month.YearRound);

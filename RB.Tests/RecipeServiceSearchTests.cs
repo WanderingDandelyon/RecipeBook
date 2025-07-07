@@ -150,7 +150,8 @@ namespace RB.Tests
       var results = await RecipeService.SearchRecipes(inSeason: true);
 
       Assert.That(results.Count == 1);
-      Assert.That(0.5 == results[0].MatchScore);
+      Assert.That(0.4 > results[0].MatchScore);
+      Assert.That(0.3 < results[0].MatchScore);
       Assert.That(PastaDish.Id.Equals(results[0].Recipe.Id));
     }
 

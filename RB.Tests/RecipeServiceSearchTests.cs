@@ -1,3 +1,4 @@
+using RB.Application;
 using RB.Core.Model;
 using RB.Core.Model.Enums;
 
@@ -5,171 +6,177 @@ namespace RB.Tests
 {
   public class RecipeServiceSearchTests
   {
-    [Fact]
-    public async Task SearchRecipes_WithTextSearch_ReturnsMatchingRecipes()
+    Ingredient Tagliatelle;
+    Ingredient Tomato;
+    Ingredient ImmortalSquash;
+    Ingredient Tofu;
+    Ingredient ChickenThigh;
+    Recipe PastaDish;
+    Recipe TofuStirFry;
+    Recipe ChickenStirFry;
+
+    [SetUp]
+    public void SetUp() 
     {
-      // Arrange
-      var testRecipe = new Recipe
+      Tagliatelle = new Ingredient
       {
-        Name = "Test Pasta Recipe",
-        Description = "A delicious pasta dish"
+        Name = "Tagliatelle",
+        IsVegan = true,
+        IsVegetarian = true,
+        IsGlutinous = true,
       };
-      RecipeBook.Recipes.Clear();
-      RecipeBook.Recipes.Add(testRecipe);
-
-      // Act
-      var results = await RecipeService.SearchRecipes(searchText: "pasta");
-
-      // Assert
-      Assert.Single(results);
-      Assert.Equal(1.0, results[0].MatchScore);
-      Assert.Equal(testRecipe.Id, results[0].Recipe.Id);
-    }
-
-    [Fact]
-    public async Task SearchRecipes_WithIngredients_ReturnsMatchingRecipes()
-    {
-      // Arrange
-      var ingredient = new Ingredient { Name = "Tomato" };
-      IngredientCatalog.Ingredients.Clear();
-      IngredientCatalog.Ingredients.Add(ingredient);
-
-      var testRecipe = new Recipe
+      
+      Tomato = new Ingredient
       {
-        Name = "Test Recipe",
-        Ingredients = new List<RecipeIngredient>
-                {
-                    new RecipeIngredient { IngredientId = ingredient.Id }
-                }
+        Name = "Tomato",
+        IsVegan = true,
+        IsVegetarian = true,
       };
-      RecipeBook.Recipes.Clear();
-      RecipeBook.Recipes.Add(testRecipe);
-
-      // Act
-      var results = await RecipeService.SearchRecipes(ingredientNames: new List<string> { "Tomato" });
-
-      // Assert
-      Assert.Single(results);
-      Assert.Equal(1.0, results[0].MatchScore);
-      Assert.Equal(testRecipe.Id, results[0].Recipe.Id);
-    }
-
-    [Fact]
-    public async Task SearchRecipes_WithSeason_ReturnsInSeasonRecipes()
-    {
-      // Arrange
-      var ingredient = new Ingredient
+      
+      ImmortalSquash = new Ingredient
       {
-        Name = "Summer Squash",
-        SeasonalityStart = Month.June,
-        SeasonalityEnd = Month.August
+        Name = "Immortal Squash",
+        IsVegan = true,
+        IsVegetarian = true,
+        MonthsInSeason = new List<Month>
+          {
+            Month.YearRound,
+          },
       };
-      IngredientCatalog.Ingredients.Clear();
-      IngredientCatalog.Ingredients.Add(ingredient);
-
-      var testRecipe = new Recipe
-      {
-        Name = "Summer Recipe",
-        Ingredients = new List<RecipeIngredient>
-                {
-                    new RecipeIngredient { IngredientId = ingredient.Id }
-                }
-      };
-      RecipeBook.Recipes.Clear();
-      RecipeBook.Recipes.Add(testRecipe);
-
-      // Act
-      var results = await RecipeService.SearchRecipes(seasons: new List<Month> { Month.July });
-
-      // Assert
-      Assert.Single(results);
-      Assert.Equal(1.0, results[0].MatchScore);
-      Assert.Equal(testRecipe.Id, results[0].Recipe.Id);
-    }
-
-    [Fact]
-    public async Task SearchRecipes_WithDietaryRestriction_ReturnsMatchingRecipes()
-    {
-      // Arrange
-      var veganIngredient = new Ingredient
+      
+      Tofu = new Ingredient
       {
         Name = "Tofu",
         IsVegan = true,
-        IsVegetarian = true
+        IsVegetarian = true,
       };
-      IngredientCatalog.Ingredients.Clear();
-      IngredientCatalog.Ingredients.Add(veganIngredient);
-
-      var testRecipe = new Recipe
+      
+      ChickenThigh = new Ingredient
       {
-        Name = "Vegan Recipe",
-        Ingredients = new List<RecipeIngredient>
-                {
-                    new RecipeIngredient { IngredientId = veganIngredient.Id }
-                }
-      };
-      RecipeBook.Recipes.Clear();
-      RecipeBook.Recipes.Add(testRecipe);
-
-      // Act
-      var results = await RecipeService.SearchRecipes(isVegan: true);
-
-      // Assert
-      Assert.Single(results);
-      Assert.Equal(1.0, results[0].MatchScore);
-      Assert.Equal(testRecipe.Id, results[0].Recipe.Id);
-    }
-
-    [Fact]
-    public async Task SearchRecipes_WithMultipleCriteria_ReturnsSortedResults()
-    {
-      // Arrange
-      var veganIngredient = new Ingredient
-      {
-        Name = "Tofu",
-        IsVegan = true,
-        IsVegetarian = true
-      };
-      var nonVeganIngredient = new Ingredient
-      {
-        Name = "Chicken",
+        Name = "Chicken Thigh",
         IsVegan = false,
-        IsVegetarian = false
+        IsVegetarian = false,
       };
-      IngredientCatalog.Ingredients.Clear();
-      IngredientCatalog.Ingredients.AddRange(new[] { veganIngredient, nonVeganIngredient });
 
-      var veganRecipe = new Recipe
+      IngredientCatalog.Ingredients.Clear();
+      IngredientCatalog.Ingredients = new List<Ingredient>
+      {
+        Tagliatelle,
+        Tomato,
+        ImmortalSquash,
+        Tofu,
+        ChickenThigh
+      };
+
+      PastaDish = new Recipe
+      {
+        Name = "Claude's Pasta Dish",
+        Description = "A delicious pasta dish, according to Claude",
+        Ingredients =
+        {
+          new RecipeIngredient
+          {
+            IngredientId = Tagliatelle.Id,
+          },
+          new RecipeIngredient
+          {
+            IngredientId = Tomato.Id,
+          },
+          new RecipeIngredient
+          {
+            IngredientId = ImmortalSquash.Id,
+          },
+        },
+      };
+
+      TofuStirFry = new Recipe
       {
         Name = "Tofu Stir Fry",
         Description = "A delicious vegan meal",
-        Ingredients = new List<RecipeIngredient>
-                {
-                    new RecipeIngredient { IngredientId = veganIngredient.Id }
-                }
+        Ingredients =
+        {
+          new RecipeIngredient
+          {
+            IngredientId = Tofu.Id,
+          },
+        },
       };
-      var nonVeganRecipe = new Recipe
+      
+      ChickenStirFry = new Recipe
       {
         Name = "Chicken Stir Fry",
-        Description = "A delicious meal",
-        Ingredients = new List<RecipeIngredient>
-                {
-                    new RecipeIngredient { IngredientId = nonVeganIngredient.Id }
-                }
+        Description = "A delicious chicken meal",
+        Ingredients =
+        {
+          new RecipeIngredient
+          {
+            IngredientId = ChickenThigh.Id,
+          },
+        },
       };
-      RecipeBook.Recipes.Clear();
-      RecipeBook.Recipes.AddRange(new[] { veganRecipe, nonVeganRecipe });
 
-      // Act
+      RecipeBook.Recipes.Clear();
+      RecipeBook.Recipes = new List<Recipe>
+      {
+        PastaDish,
+        TofuStirFry,
+        ChickenStirFry,
+      };
+    }
+
+    [Test]
+    public async Task SearchRecipes_WithTextSearch_ReturnsMatchingRecipes()
+    {
+      var results = await RecipeService.SearchRecipes(searchText: "pasta");
+
+      Assert.That(results.Count == 1);
+      Assert.That(1.0 == results[0].MatchScore);
+      Assert.That(PastaDish.Id.Equals(results[0].Recipe.Id));
+    }
+
+    [Test]
+    public async Task SearchRecipes_WithIngredients_ReturnsMatchingRecipes()
+    {
+      var results = await RecipeService.SearchRecipes(ingredientNames: new List<string> { "Tomato" });
+
+      Assert.That(results.Count == 1);
+      Assert.That(1.0 == results[0].MatchScore);
+      Assert.That(PastaDish.Id.Equals(results[0].Recipe.Id));
+    }
+
+    [Test]
+    public async Task SearchRecipes_WithSeason_ReturnsInSeasonRecipes()
+    {
+      var results = await RecipeService.SearchRecipes(inSeason: true);
+
+      Assert.That(results.Count == 1);
+      Assert.That(0.5 == results[0].MatchScore);
+      Assert.That(PastaDish.Id.Equals(results[0].Recipe.Id));
+    }
+
+    [Test]
+    public async Task SearchRecipes_WithDietaryRestriction_ReturnsMatchingRecipes()
+    {
+      var results = await RecipeService.SearchRecipes(isVegan: true);
+
+      Assert.That(results.Count == 2);
+      Assert.That(1.0 == results[0].MatchScore);
+      Assert.That(1.0 == results[1].MatchScore);
+      Assert.That(results.Any(r => r.Recipe.Id.Equals(PastaDish.Id)));
+      Assert.That(results.Any(r => r.Recipe.Id.Equals(TofuStirFry.Id)));
+    }
+
+    [Test]
+    public async Task SearchRecipes_WithMultipleCriteria_ReturnsSortedResults()
+    {
       var results = await RecipeService.SearchRecipes(
           searchText: "Stir Fry",
           isVegan: true
       );
 
-      // Assert
-      Assert.Equal(2, results.Count);
-      Assert.Equal(veganRecipe.Id, results[0].Recipe.Id);
-      Assert.True(results[0].MatchScore > results[1].MatchScore);
+      Assert.That(results.Count == 1);
+      Assert.That(1.0 == results[0].MatchScore);
+      Assert.That(TofuStirFry.Id.Equals(results[0].Recipe.Id));
     }
   }
 }

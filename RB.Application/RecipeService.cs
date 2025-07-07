@@ -31,10 +31,6 @@ namespace RB.Application
         double criteria = 0;
 
         var searchIngredientTasks = new List<Task<List<Ingredient?>>>();
-        foreach (var ingredientName in ingredientNames)
-        {
-          searchIngredientTasks.Add(IngredientService.SearchIngredients(ingredientName));
-        }
 
         // Text search in name and description
         if (!string.IsNullOrEmpty(searchText))
@@ -46,18 +42,23 @@ namespace RB.Application
             matches += 0.5;
         }
 
-        await Task.WhenAll(searchIngredientTasks);
-
-        var searchIngredients = new List<Ingredient?>();
-        foreach (var task in searchIngredientTasks)
-        {
-          searchIngredients.Add(task.Result.FirstOrDefault());
-        }
-
         // Ingredient search
         if (ingredientNames != null && ingredientNames.Any())
         {
           criteria++;
+
+          foreach (var ingredientName in ingredientNames)
+          {
+            searchIngredientTasks.Add(IngredientService.SearchIngredients(ingredientName));
+          }
+
+          await Task.WhenAll(searchIngredientTasks);
+
+          var searchIngredients = new List<Ingredient?>();
+          foreach (var task in searchIngredientTasks)
+          {
+            searchIngredients.Add(task.Result.FirstOrDefault());
+          }
 
           double ingredientMatches = searchIngredients.Count(si => recipe.Ingredients.Any(ri => 
             string.Equals(ri.IngredientId, si.Id)));

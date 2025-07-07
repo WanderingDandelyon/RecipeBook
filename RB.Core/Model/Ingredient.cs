@@ -14,7 +14,7 @@ namespace RB.Core.Model
     public List<Month> MonthsInSeason { get; set; } = new List<Month>();
     public bool IsVegan { get; set; }
     public bool IsVegetarian { get; set; }
-    public bool IsDairy { get; set; }
+    public bool IsLactoseFree { get; set; }
     public bool IsFodmap { get; set; }
     public bool IsGlutinous { get; set; }
     // TODO: Add additional dietary information (asian vegetarianism, pescatarianism, processed, caveman)
